@@ -1,4 +1,4 @@
-import cv2, os, json
+import cv2, os, json, argparse
 import numpy as np
 from math import sqrt
 
@@ -57,9 +57,12 @@ def make_label(name):
     return label
 
 # adds a label to the given cart
-def add_label(cart_dr, cart_name, label_path):
+def add_label(cart_path, label_path):
+    if not cart_path.endswith('.p8'):
+        cart_path += '.p8'
+    
     label = make_label(label_path)
-    fp = open(cart_dr + cart_name + '.p8', 'r')
+    fp = open(cart_path, 'r')
     result = ""
     a = 0
 
@@ -76,6 +79,17 @@ def add_label(cart_dr, cart_name, label_path):
         if '__label__' in line:
             a = 128
 
-    f =  open(cart_dr + cart_name + '.p8', 'w', newline='\n')
+    f =  open(cart_path, 'w', newline='\n')
     f.write(result)
     f.close()
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--cart", help = "path to the cart you want to modify")
+    parser.add_argument("-l", "--label", help = "path to the image label")
+    args = parser.parse_args()
+
+    if args.cart and args.label:
+        add_label(args.cart, args.label)
+    else:
+        raise Exception('One or more of the arguments are missing.')
