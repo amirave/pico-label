@@ -1,6 +1,5 @@
-import cv2, os, json, argparse
+import cv2, argparse
 import numpy as np
-from math import sqrt
 
 # info on how this works on the readme
 
@@ -65,6 +64,7 @@ def add_label(cart_path, label_path):
     fp = open(cart_path, 'r')
     result = ""
     a = 0
+    has_label = False
 
     # replace current label in cart with new one
     for i, line in enumerate(fp):
@@ -78,6 +78,13 @@ def add_label(cart_path, label_path):
 
         if '__label__' in line:
             a = 128
+            has_label = True
+
+    if not has_label:
+        result += '__label__\n'
+        for i in range(128):
+            row = label[i]
+            result += ''.join(row) + '\n'
 
     f =  open(cart_path, 'w', newline='\n')
     f.write(result)
@@ -89,7 +96,12 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--label", help = "path to the image label")
     args = parser.parse_args()
 
-    if args.cart and args.label:
-        add_label(args.cart, args.label)
-    else:
-        raise Exception('One or more of the arguments are missing.')
+    cart = args.cart
+    label = args.label
+
+    if not cart:
+        cart = input('Please input the relative path to the cartrige: ')
+    if not label:
+        label = input('Please input the relative path to the label: ')
+
+    add_label(cart, label)
