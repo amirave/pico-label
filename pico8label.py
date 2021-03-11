@@ -2,14 +2,6 @@ import cv2, os, json
 import numpy as np
 from math import sqrt
 
-config = json.load(open('config.json', 'r'))
-
-def get_config(opt):
-	if config[opt] == None:
-		raise Exception('Field "{0}" in config file is empty. Please assign it the correct path.'.format(opt))
-	else:
-		return config[opt]
-
 # info on how this works on the readme
 
 pico_colors = [
@@ -65,15 +57,7 @@ def make_label(name):
     return label
 
 # adds a label to the given cart
-def add_label(cart_dr, cart_name):
-    label_path = ""
-
-    # if project has label.png, use it, otherwise use default (config)
-    if os.path.exists(cart_dr + 'label.png'):
-        label_path = cart_dr + 'label.png'
-    else:
-        label_path = get_config('default_label_path')
-    
+def add_label(cart_dr, cart_name, label_path):
     label = make_label(label_path)
     fp = open(cart_dr + cart_name + '.p8', 'r')
     result = ""
